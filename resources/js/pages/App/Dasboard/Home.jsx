@@ -1,4 +1,4 @@
-import { Link } from "@inertiajs/react";
+import { Link, Head } from "@inertiajs/react";
 
 export default function Home() {
   const menuItems = [
@@ -11,27 +11,33 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen w-full bg-gray-100 p-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full h-[40rem] mx-auto cursor-pointer">
-            {menuItems.map((item) => (
-            <Link
-                key={item.name}
-                href={item.href}
-                className="group flex flex-col items-center justify-center gap-4 rounded-lg bg-white text-[#ff8800] hover:bg-[#ff8800] transition-all duration-300 shadow-md hover:shadow-lg"
-            >
-                <svg
-                className="w-20 h-20 fill-[#ff8800] group-hover:fill-white transition-colors duration-300"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
+    <>
+        <Head title="Home" />
+        <div className="min-h-screen w-full bg-gray-100 p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full h-[40rem] mx-auto cursor-pointer">
+                {menuItems.map((item) => (
+                <Link
+                    key={item.name}
+                    href={item.href}
+                    className="group flex flex-col items-center justify-center gap-4 rounded-lg bg-white text-[#ff8800] hover:bg-[#ff8800] transition-all duration-300 shadow-md hover:shadow-lg"
                 >
-                <path d={item.iconPath} />
-                </svg>
-                <span className="text-lg font-semibold group-hover:text-white transition-colors duration-300">
-                {item.name}
-                </span>
-            </Link>
-            ))}
+                    <svg
+                    className="w-20 h-20 fill-[#ff8800] group-hover:fill-white transition-colors duration-300"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    >
+                    <path d={item.iconPath} />
+                    </svg>
+                    <span className="text-lg font-semibold group-hover:text-white transition-colors duration-300">
+                    {item.name}
+                    </span>
+                </Link>
+                ))}
+            </div>
         </div>
-    </div>
+    </>
   );
 }
+
+Home.title = "Dashboard";
+

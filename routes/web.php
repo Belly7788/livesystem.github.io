@@ -7,7 +7,7 @@ Route::get('/', function () {
     return inertia('App/Dasboard/Home');
 });
 
-Route::get('/user', function () {
+Route::get('/system/user', function () {
     return inertia('App/User/User');
 });
 
