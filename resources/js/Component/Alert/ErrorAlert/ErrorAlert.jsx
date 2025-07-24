@@ -1,28 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { getDarkModeClass } from "../../utils/darkModeUtils";
-import { FiAlertCircle } from "react-icons/fi";
-import { useTranslation } from "react-i18next";
+import { getDarkModeClass } from "../../../utils/darkModeUtils";
+import { FiAlertCircle, FiX } from "react-icons/fi";
 
-function ErrorAlert({ isOpen, onClose, title, message, darkMode, buttons = [] }) {
+function ErrorAlert({ isOpen, onClose, title, message, darkMode, buttons = [], timeout = 3000 }) {
     const [isClosing, setIsClosing] = useState(false);
-    const { t } = useTranslation();
 
+    // Inject CSS for animations (same as SuccessAlert)
     useEffect(() => {
         const style = document.createElement("style");
         style.textContent = `
-            @keyframes showAlert {
+            @keyframes slideDown {
                 from {
                     opacity: 0;
-                    transform: scale(0.95);
+                    transform: translateY(-100%);
                 }
                 to {
                     opacity: 1;
-                    transform: scale(1);
+                    transform: translateY(0);
                 }
             }
-            .animate-show-alert {
-                animation: showAlert 0.3s ease-in-out forwards;
+            @keyframes slideUp {
+                from {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateY(-100%);
+                }
+            }
+            .animate-slide-down {
+                animation: slideDown 0.3s ease-in-out forwards;
+            }
+            .animate-slide-up {
+                animation: slideUp 0.3s ease-in-out forwards;
             }
         `;
         document.head.appendChild(style);
@@ -32,72 +44,83 @@ function ErrorAlert({ isOpen, onClose, title, message, darkMode, buttons = [] })
         };
     }, []);
 
+    // Auto-close after timeout (same as SuccessAlert)
+    useEffect(() => {
+        if (isOpen) {
+            const timer = setTimeout(() => {
+                handleClose();
+            }, timeout);
+            return () => clearTimeout(timer);
+        }
+    }, [isOpen, timeout]);
+
+    // Handle closing with animation
     const handleClose = () => {
         setIsClosing(true);
         setTimeout(() => {
             setIsClosing(false);
             onClose();
-        }, 300);
+        }, 300); // Match animation duration
     };
-
-    // Default button configuration
-    const defaultButton = {
-        onClick: handleClose, // Default behavior: just close the alert
-    };
-
-    // Use provided buttons or fall back to default button
-    const effectiveButtons = buttons.length > 0 ? buttons : [defaultButton];
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-6 pointer-events-none">
             <div
-                className={`rounded-lg p-6 shadow-xl w-96 transform transition-all duration-300 ease-in-out ${
-                    isClosing
-                        ? "scale-95 opacity-0"
-                        : "scale-100 opacity-100 animate-show-alert"
+                className={`rounded-lg p-4 shadow-xl w-full max-w-md transform transition-all duration-300 ease-in-out pointer-events-auto ${
+                    isClosing ? "animate-slide-up" : "animate-slide-down"
                 } ${getDarkModeClass(
                     darkMode,
                     "bg-gray-800 text-white border border-gray-700",
-                    "bg-white text-gray-800 border border-gray-200"
+                    "bg-red-100 text-red-800 border border-red-200"
                 )}`}
             >
-                <div className="flex items-center mb-4">
-                    <FiAlertCircle
-                        className={`mr-2 h-6 w-6 ${getDarkModeClass(
-                            darkMode,
-                            "text-red-500",
-                            "text-red-500"
-                        )}`}
-                    />
-                    <h3 className="text-lg font-semibold">{title}</h3>
-                </div>
-                <p className="mb-6 text-sm">{message}</p>
-                <div className="flex justify-end space-x-2">
-                    {effectiveButtons.map((button, index) => (
-                        <button
-                            key={index}
-                            onClick={() => {
-                                button.onClick();
-                                handleClose(); // Close the alert after the custom onClick
-                            }}
-                            className={`px-4 py-2 rounded-md transition-colors duration-200 ${getDarkModeClass(
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                        <FiAlertCircle
+                            className={`h-5 w-5 ${getDarkModeClass(
                                 darkMode,
-                                "bg-gray-600 hover:bg-gray-700 text-white",
-                                "bg-gray-200 hover:bg-gray-300 text-gray-800"
+                                "text-red-400",
+                                "text-red-600"
                             )}`}
-                        >
-                            {t("cancel")} {/* Static button name */}
+                        />
+                        <span className="text-sm font-medium">{message}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        {buttons.map((button, index) => (
+                            <button
+                                key={index}
+                                onClick={() => {
+                                    button.onClick();
+                                    handleClose();
+                                }}
+                                className={`px-4 py-1 rounded-md transition-colors duration-200 ${getDarkModeClass(
+                                    darkMode,
+                                    "bg-gray-600 hover:bg-gray-700 text-white",
+                                    "bg-red-200 hover:bg-red-300 text-red-800"
+                                )}`}
+                            >
+                                {button.text || "Close"}
+                            </button>
+                        ))}
+                        <button onClick={handleClose}>
+                            <FiX
+                                className={`h-5 w-5 ${getDarkModeClass(
+                                    darkMode,
+                                    "text-gray-400 hover:text-gray-200",
+                                    "text-red-600 hover:text-red-800"
+                                )}`}
+                            />
                         </button>
-                    ))}
+                    </div>
                 </div>
             </div>
         </div>
     );
 }
 
-function showErrorAlert({ title, message, darkMode = false, buttons = [] }) {
+function showErrorAlert({ title, message, darkMode = false, buttons = [], timeout = 3000 }) {
     return new Promise((resolve) => {
         const AlertWrapper = () => {
             const [isOpen, setIsOpen] = React.useState(true);
@@ -115,6 +138,7 @@ function showErrorAlert({ title, message, darkMode = false, buttons = [] }) {
                     message={message}
                     darkMode={darkMode}
                     buttons={buttons}
+                    timeout={timeout}
                 />
             );
         };
@@ -133,3 +157,4 @@ function showErrorAlert({ title, message, darkMode = false, buttons = [] }) {
 }
 
 export { showErrorAlert };
+

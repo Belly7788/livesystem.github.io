@@ -53,7 +53,7 @@ const NoDataComponent = ({ darkMode, width = 100, height = 100, fontSize = 14 })
                 }`}
                 style={{ fontSize: `${fontSize}px` }}
             >
-                No_Data_Available
+                No​ Data Available
             </h3>
         </div>
     );
