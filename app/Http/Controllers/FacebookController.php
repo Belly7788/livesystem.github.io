@@ -16,7 +16,7 @@ class FacebookController extends Controller
         $connections = FacebookConnection::where('user_id', Auth::id())->get();
 
         // Pass connections and Facebook App ID to the Inertia component
-        return inertia('App/Facebook/Facebook', [
+        return inertia('Facebook/Facebook', [
             'connections' => $connections->map(function ($connection) {
                 return [
                     'id' => $connection->id,

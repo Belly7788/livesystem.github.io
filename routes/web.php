@@ -6,12 +6,9 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return inertia('App/Dasboard/Home');
-})->middleware('auth');
+    return inertia('Dasboard/Home');
+});
 
-Route::get('/system/facebook', function () {
-    return inertia('App/Facebook/Facebook');
-})->middleware('auth');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/system/facebook', [FacebookController::class, 'index'])->name('facebook.index');

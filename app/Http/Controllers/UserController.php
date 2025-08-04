@@ -27,7 +27,7 @@ class UserController extends Controller
 
         $users = $query->paginate($perPage, ['*'], 'page', $page);
 
-        return Inertia::render('App/User/User', [
+        return Inertia::render('User/User', [
             'users' => $users->items(),
             'pagination' => [
                 'current_page' => $users->currentPage(),
