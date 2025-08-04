@@ -33,7 +33,7 @@ export default function Login({ darkMode = false, errors = {} }) {
                     <div className="flex justify-center">
                         <img src="/storage/logo/image/1.1.png" alt="Logo" className="h-16 w-auto" />
                     </div>
-                    <h2 className="text-2xl font-bold text-center">EZE Live</h2>
+                    <h2 className="text-2xl font-bold text-center">Sign In</h2>
                     {errors.login && (
                         <div className="text-red-500 text-sm text-center">{errors.login}</div>
                     )}
